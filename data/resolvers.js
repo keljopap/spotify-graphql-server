@@ -86,6 +86,18 @@ const fetchTracksOfAlbum = async(albumId, limit) => {
         .map(trackRaw => spotifyJsonToTracks(trackRaw));
 }
 
+const fetchAudioFeaturesOfTrack = async(trackId, limit) => {
+    console.log(`debug: query audio features of track ${trackId} `);
+
+    const response = await fetch(`https://api.spotify.com/v1/audio-features/${trackId}`, {
+        headers: await haveHeadersWithAuthToken()
+    });
+    const data = await response.json();
+
+    throwExceptionOnError(data);
+    return data || {};
+}
+
 module.exports.fetchAlbumsOfArtist = fetchAlbumsOfArtist;
 module.exports.fetchTracksOfAlbum = fetchTracksOfAlbum;
 
@@ -123,6 +135,7 @@ const spotifyJsonToAlbum = (albumRaw) => {
 
 const spotifyJsonToTracks = (trackRaw) => {
     return {
-        ...trackRaw
+        ...trackRaw,
+        audio_features: fetchAudioFeaturesOfTrack(trackRaw.id)
     }
 }

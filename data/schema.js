@@ -27,6 +27,25 @@ type Track {
   artists: [Artist]
   preview_url: String
   id: ID
+  audio_features: AudioFeatures
+}
+type AudioFeatures {
+  danceability: Float,
+  energy: Float,
+  key: Int,
+  loudness: Float,
+  speechiness: Float,
+  acousticness: Float,
+  instrumentalness: Float,
+  liveness: Float,
+  valence: Float,
+  tempo: Float,
+  id: String,
+  uri: String,
+  track_href: String,
+  analysis_url: String,
+  duration_ms: Int,
+  time_signature: Int
 }
 `);
 
