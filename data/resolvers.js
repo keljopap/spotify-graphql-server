@@ -70,12 +70,24 @@ const fetchAlbumsOfArtist = async (artistId, limit) => {
     });
     const data = await response.json();
     throwExceptionOnError(data);
-
     return (data.items || [])
         .map(albumRaw => spotifyJsonToAlbum(albumRaw));
 };
 
+const fetchTracksOfAlbum = async(albumId, limit) => {
+    console.log(`debug: query tracks of album ${albumId} `);
+
+    const response = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
+        headers: await haveHeadersWithAuthToken()
+    });
+    const data = await response.json();
+    throwExceptionOnError(data);
+    return (data.items || [])
+        .map(trackRaw => spotifyJsonToTracks(trackRaw));
+}
+
 module.exports.fetchAlbumsOfArtist = fetchAlbumsOfArtist;
+module.exports.fetchTracksOfAlbum = fetchTracksOfAlbum;
 
 const spotifyJsonToArtist = async (raw) => {
     return {
@@ -105,7 +117,12 @@ const spotifyJsonToAlbum = (albumRaw) => {
         // This needs extra logic: defaults to an empty string, if there is no image
         // else: just takes URL of the first image
         image: albumRaw.images[0] ? albumRaw.images[0].url : '',
-
-        tracks: [] // TODO implement fetching of tracks of album
+        tracks: fetchTracksOfAlbum(albumRaw.id)
     };
 };
+
+const spotifyJsonToTracks = (trackRaw) => {
+    return {
+        ...trackRaw
+    }
+}
